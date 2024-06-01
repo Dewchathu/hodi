@@ -2,24 +2,29 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:camera/camera.dart';
+import 'package:external_path/external_path.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:hodi/services/fetch_albums.dart';
 import 'package:hodi/services/fetch_media.dart';
 import 'package:hodi/wedgits/media_grid_view.dart';
 import 'package:hodi/wedgits/media_item.dart';
+import 'package:media_scanner/media_scanner.dart';
 import 'package:photo_manager/photo_manager.dart';
 import 'package:http/http.dart' as http;
 
 import '../models/media.dart';
+import '../models/media_processing_results.dart';
+import '../screens/text_output_screen.dart';
 
 class FloatingRectangle extends StatefulWidget {
   final Function(bool) onCameraVisibilityChanged;
   final List<Media> selectedMedias;
   final bool isFlashOn;
+  final CameraController cameraController;
 
   const FloatingRectangle(
-      {Key? key, required this.onCameraVisibilityChanged, required this.selectedMedias, required this.isFlashOn})
+      {Key? key, required this.onCameraVisibilityChanged, required this.selectedMedias, required this.isFlashOn, required this.cameraController})
       : super(key: key);
 
   @override
@@ -30,7 +35,7 @@ class _FloatingRectangleState extends State<FloatingRectangle> {
   late double _bottomPosition;
   late double _height;
   late CameraController cameraController;
-  late Future<void> vameraValue;
+  late Future<void> cameraValue;
   bool _isCameraVisible = true;
   final List<Media> _selectedMedias = [];
 
@@ -49,11 +54,9 @@ class _FloatingRectangleState extends State<FloatingRectangle> {
   }
 
   final List<Media> _medias = [];
-  int _lastPage = 0;
   int _currentsPage = 0;
 
   void _loadMedias() async {
-    _lastPage = _currentsPage;
     if (_currentAlbum != null) {
       List<Media> medias =
           await fetchMedias(albums: _currentAlbum!, page: _currentsPage);
@@ -62,30 +65,48 @@ class _FloatingRectangleState extends State<FloatingRectangle> {
       });
     }
   }
-  Future<void> _sendImage(String imagePath) async {
+
+  Future<File> saveImage(XFile image)async{
+    final downloadPath = await ExternalPath.getExternalStoragePublicDirectory(ExternalPath.DIRECTORY_DOWNLOADS);
+    final fileName = '${DateTime.now().millisecondsSinceEpoch}.png';
+    final file = File('$downloadPath/$fileName');
+
+    try{
+      await file.writeAsBytes(await image.readAsBytes());
+    }catch(_){
+
+    }
+    return file;
+  }
+
+  Future<MediaProcessingResult> _sendImage(String imagePath) async {
     try {
       final imageBytes = File(imagePath).readAsBytesSync();
       final imageBase64 = base64Encode(imageBytes);
 
       final response = await http.post(
-        Uri.parse('http://your_server_ip:5000/process_image'),
+        Uri.parse('https://2dc2-175-157-57-90.ngrok-free.app/process_image'),
         headers: {'Content-Type': 'application/json'},
         body: jsonEncode({'image': imageBase64}),
       );
 
       if (response.statusCode == 200) {
         print('Image processing complete');
-        print(jsonDecode(response.body)['result']);
+        final result = jsonDecode(response.body)['result'];
+        return MediaProcessingResult(result);
       } else {
         print('Image processing failed');
+        return MediaProcessingResult('File not found');
       }
     } catch (e) {
       print('Error sending image: $e');
+      return MediaProcessingResult('Error: $e');
     }
   }
 
   void takePicture() async{
     XFile? image;
+
 
     if(cameraController.value.isTakingPicture || !cameraController.value.isInitialized){
       return;
@@ -101,8 +122,22 @@ class _FloatingRectangleState extends State<FloatingRectangle> {
         cameraController.setFlashMode(FlashMode.off);
       });
     }
-    final file = await _sendImage(image.path);
+    final file = await saveImage(image);
+
+    setState(() {
+      _sendImage(file.path).then((result) {
+        _loadAlbums();
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => TextOutputScreen(file: file, isCameraImage: true, result: result.result),
+          ),
+        );
+      });
+    });
+    MediaScanner.loadMedia(path: file.path);
   }
+
 
   @override
   void initState() {
@@ -111,6 +146,7 @@ class _FloatingRectangleState extends State<FloatingRectangle> {
     _height = 150.0;
     _selectedMedias.addAll(widget.selectedMedias);
     _loadAlbums();
+    cameraController = widget.cameraController;
   }
 
 //final ScrollController _scrollController = ScrollController();
@@ -195,7 +231,7 @@ class _FloatingRectangleState extends State<FloatingRectangle> {
                         ),
                         GestureDetector(
                           onTap: () {
-                            takePicture;
+                            takePicture();
                           },
                           child: Container(
                             height: 80,
@@ -227,7 +263,7 @@ class _FloatingRectangleState extends State<FloatingRectangle> {
                       ],
                     )
                   : Padding(
-                      padding: EdgeInsets.all(20),
+                      padding: const EdgeInsets.all(20),
                       child: Column(
                         children: [
                           Row(
@@ -256,15 +292,6 @@ class _FloatingRectangleState extends State<FloatingRectangle> {
                                     alignment: Alignment.centerLeft,
                                     underline: Container(),
                                   ),
-                                ),
-                              ),
-                              GestureDetector(
-                                onTap: () {
-                                  // Handle 'View all' tap
-                                },
-                                child: const Text(
-                                  'View all',
-                                  style: TextStyle(fontWeight: FontWeight.bold),
                                 ),
                               ),
                             ],

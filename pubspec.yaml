@@ -43,6 +43,8 @@ dependencies:
   provider: ^5.0.0
   path_provider: ^2.1.2
   http: ^1.2.1
+  external_path: ^1.0.3
+  media_scanner: ^2.1.0
 
 dev_dependencies:
   flutter_test:

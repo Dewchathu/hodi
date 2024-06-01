@@ -61,7 +61,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     setState(() {
                       _isFlashVisible = isVisible;
                     });
-                  },selectedMedias: _selectedMedias, isFlashOn: isFlashOn,
+                  },selectedMedias: _selectedMedias, isFlashOn: isFlashOn, cameraController: _controller,
                 ),
                 SafeArea(
                     child: Container(
