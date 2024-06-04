@@ -24,7 +24,11 @@ class FloatingRectangle extends StatefulWidget {
   final CameraController cameraController;
 
   const FloatingRectangle(
-      {Key? key, required this.onCameraVisibilityChanged, required this.selectedMedias, required this.isFlashOn, required this.cameraController})
+      {Key? key,
+      required this.onCameraVisibilityChanged,
+      required this.selectedMedias,
+      required this.isFlashOn,
+      required this.cameraController})
       : super(key: key);
 
   @override
@@ -66,16 +70,15 @@ class _FloatingRectangleState extends State<FloatingRectangle> {
     }
   }
 
-  Future<File> saveImage(XFile image)async{
-    final downloadPath = await ExternalPath.getExternalStoragePublicDirectory(ExternalPath.DIRECTORY_DOWNLOADS);
+  Future<File> saveImage(XFile image) async {
+    final downloadPath = await ExternalPath.getExternalStoragePublicDirectory(
+        ExternalPath.DIRECTORY_DOWNLOADS);
     final fileName = '${DateTime.now().millisecondsSinceEpoch}.png';
     final file = File('$downloadPath/$fileName');
 
-    try{
+    try {
       await file.writeAsBytes(await image.readAsBytes());
-    }catch(_){
-
-    }
+    } catch (_) {}
     return file;
   }
 
@@ -104,20 +107,20 @@ class _FloatingRectangleState extends State<FloatingRectangle> {
     }
   }
 
-  void takePicture() async{
+  void takePicture() async {
     XFile? image;
 
-
-    if(cameraController.value.isTakingPicture || !cameraController.value.isInitialized){
+    if (cameraController.value.isTakingPicture ||
+        !cameraController.value.isInitialized) {
       return;
     }
-    if(widget.isFlashOn == false){
+    if (widget.isFlashOn == false) {
       await cameraController.setFlashMode(FlashMode.off);
-    }else{
+    } else {
       await cameraController.setFlashMode(FlashMode.torch);
     }
     image = await cameraController.takePicture();
-    if(cameraController.value.flashMode == FlashMode.torch){
+    if (cameraController.value.flashMode == FlashMode.torch) {
       setState(() {
         cameraController.setFlashMode(FlashMode.off);
       });
@@ -130,14 +133,14 @@ class _FloatingRectangleState extends State<FloatingRectangle> {
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) => TextOutputScreen(file: file, isCameraImage: true, result: result.result),
+            builder: (context) => TextOutputScreen(
+                file: file, isCameraImage: true, result: result.result),
           ),
         );
       });
     });
     MediaScanner.loadMedia(path: file.path);
   }
-
 
   @override
   void initState() {
@@ -207,7 +210,7 @@ class _FloatingRectangleState extends State<FloatingRectangle> {
             AnimatedContainer(
               duration: const Duration(milliseconds: 200),
               height: _height,
-              decoration:BoxDecoration(
+              decoration: BoxDecoration(
                 color: Theme.of(context).canvasColor,
                 borderRadius: const BorderRadius.only(
                   topLeft: Radius.circular(20),
@@ -241,7 +244,9 @@ class _FloatingRectangleState extends State<FloatingRectangle> {
                               borderRadius: BorderRadius.circular(80),
                               boxShadow: [
                                 BoxShadow(
-                                  color: Theme.of(context).shadowColor.withOpacity(0.3),
+                                  color: Theme.of(context)
+                                      .shadowColor
+                                      .withOpacity(0.3),
                                   blurRadius: 5,
                                   spreadRadius: 0,
                                   offset: const Offset(0, 0),
@@ -283,10 +288,13 @@ class _FloatingRectangleState extends State<FloatingRectangle> {
                                       _loadMedias();
                                     },
                                     items: _albums
-                                        .map((e) => DropdownMenuItem<AssetPathEntity>(
-                                      value: e,
-                                      child: Text(e.name.isEmpty ? "0" : e.name),
-                                    ))
+                                        .map((e) =>
+                                            DropdownMenuItem<AssetPathEntity>(
+                                              value: e,
+                                              child: Text(e.name.isEmpty
+                                                  ? "0"
+                                                  : e.name),
+                                            ))
                                         .toList(),
                                     icon: const Icon(Icons.arrow_drop_down),
                                     alignment: Alignment.centerLeft,
@@ -296,9 +304,7 @@ class _FloatingRectangleState extends State<FloatingRectangle> {
                               ),
                             ],
                           ),
-                          Expanded(
-                            child: MediaGridView(medias: _medias)
-                          ),
+                          Expanded(child: MediaGridView(medias: _medias)),
                         ],
                       ),
                     ),

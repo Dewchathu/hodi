@@ -13,7 +13,13 @@ class TextOutputScreen extends StatefulWidget {
   final File? file;
   final bool isCameraImage;
   final String result;
-  const TextOutputScreen({Key? key, this.media, required this.isCameraImage, this.file, required this.result}) : super(key: key);
+  const TextOutputScreen(
+      {Key? key,
+      this.media,
+      required this.isCameraImage,
+      this.file,
+      required this.result})
+      : super(key: key);
 
   @override
   State<TextOutputScreen> createState() => _TextOutputScreenState();
@@ -26,6 +32,7 @@ class _TextOutputScreenState extends State<TextOutputScreen> {
     final value = ClipboardData(text: controller.text);
     Clipboard.setData(value);
   }
+
   @override
   void initState() {
     super.initState();
@@ -42,20 +49,17 @@ class _TextOutputScreenState extends State<TextOutputScreen> {
             children: [
               !widget.isCameraImage
                   ? SizedBox(width: 100, child: MediaItem(media: widget.media!))
-              :SizedBox(width: 100, child: Image.file(widget.file!)),
+                  : SizedBox(width: 100, child: Image.file(widget.file!)),
               const SizedBox(height: 20),
               TextField(
-                minLines: 1,
-                maxLines: 10,
-                controller: controller,
-                decoration: const InputDecoration(
-                  fillColor: Colors.grey,
-                  border: OutlineInputBorder()
-                )
-              ),
+                  minLines: 1,
+                  maxLines: 10,
+                  controller: controller,
+                  decoration: const InputDecoration(
+                      fillColor: Colors.grey, border: OutlineInputBorder())),
               const SizedBox(height: 10),
               ElevatedButton.icon(
-                  onPressed: _copy,
+                onPressed: _copy,
                 icon: const Icon(Icons.copy),
                 label: const Text('Copy'),
               )
