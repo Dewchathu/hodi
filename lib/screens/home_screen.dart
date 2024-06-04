@@ -1,7 +1,12 @@
+import 'dart:async';
+import 'dart:io';
+
 import 'package:camera/camera.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
+import 'package:internet_connection_checker_plus/internet_connection_checker_plus.dart';
 
 import '../models/media.dart';
 import '../wedgits/floating_rectangle.dart';
@@ -19,11 +24,37 @@ class _HomeScreenState extends State<HomeScreen> {
   late Future<void> _initializeControllerFuture;
   bool _isFlashVisible = true;
   bool isFlashOn = false;
+  bool isConnectedToInternet = false;
   final List<Media> _selectedMedias = [];
+
+  StreamSubscription? _internetConnectionStreamSubscription;
+  OverlayEntry? _overlayEntry;
 
   @override
   void initState() {
     super.initState();
+    _internetConnectionStreamSubscription =
+        InternetConnection().onStatusChange.listen((event) {
+          switch (event) {
+            case InternetStatus.connected:
+              setState(() {
+                isConnectedToInternet = true;
+              });
+              showConnectivitySnackBar(context, isConnectedToInternet);
+              break;
+            case InternetStatus.disconnected:
+              setState(() {
+                isConnectedToInternet = false;
+              });
+              showConnectivitySnackBar(context, isConnectedToInternet);
+              break;
+            default:
+              setState(() {
+                isConnectedToInternet = false;
+              });
+              showConnectivitySnackBar(context, isConnectedToInternet);
+          }
+        });
     _controller = CameraController(widget.cameras[0], ResolutionPreset.high);
     _initializeControllerFuture = _controller.initialize();
   }
@@ -31,9 +62,10 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   void dispose() {
     _controller.dispose();
+    _internetConnectionStreamSubscription?.cancel();
+    removeCustomSnackBar();
     super.dispose();
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -61,7 +93,9 @@ class _HomeScreenState extends State<HomeScreen> {
                     setState(() {
                       _isFlashVisible = isVisible;
                     });
-                  },selectedMedias: _selectedMedias, isFlashOn: isFlashOn,
+                  },
+                  selectedMedias: _selectedMedias,
+                  isFlashOn: isFlashOn,
                 ),
                 SafeArea(
                     child: Container(
@@ -73,25 +107,35 @@ class _HomeScreenState extends State<HomeScreen> {
                           Row(
                             children: [
                               const SizedBox(width: 16),
-                              const Icon(Icons.close, color: Colors.white),
+                              GestureDetector(
+                                onTap: () {
+                                  if (Platform.isAndroid) {
+                                    SystemNavigator.pop();
+                                  } else if (Platform.isIOS) {
+                                    exit(0);
+                                  }
+                                },
+                                child: const Icon(Icons.close, color: Colors.white),
+                              ),
                               const SizedBox(width: 16),
                               GestureDetector(
-                                onTap: (){
+                                onTap: () {
                                   setState(() {
                                     isFlashOn = !isFlashOn;
                                   });
                                 },
                                 child: Container(
                                   decoration: const BoxDecoration(
-                                    color: Colors.transparent,
-                                    shape: BoxShape.circle
-                                  ),
+                                      color: Colors.transparent,
+                                      shape: BoxShape.circle),
                                   child: Padding(
-                                    padding: EdgeInsets.all(10),
+                                    padding: const EdgeInsets.all(10),
                                     child: _isFlashVisible
-                                        ?isFlashOn
-                                        ?const Icon(Icons.flash_on, color: Colors.white)
-                                        :const Icon(Icons.flash_off, color: Colors.white)
+                                        ? isFlashOn
+                                        ? const Icon(
+                                        Icons.flash_on, color: Colors.white)
+                                        : const Icon(Icons.flash_off,
+                                        color: Colors.white)
                                         : Container(),
                                   ),
                                 ),
@@ -99,12 +143,12 @@ class _HomeScreenState extends State<HomeScreen> {
                             ],
                           ),
                           const Spacer(),
-                          const Icon(CupertinoIcons.ellipsis_vertical, color: Colors.white),
+                          const Icon(CupertinoIcons.ellipsis_vertical,
+                              color: Colors.white),
                           const SizedBox(width: 16),
                         ],
                       ),
-                    )
-                ),
+                    )),
               ],
             );
           } else {
@@ -116,5 +160,60 @@ class _HomeScreenState extends State<HomeScreen> {
       ),
     );
   }
-}
 
+  void showConnectivitySnackBar(BuildContext context, bool isConnected) {
+    final IconData iconData = isConnected ? Icons.wifi : Icons.wifi_off;
+    final color = isConnected ? Colors.green : Colors.red;
+    final text = isConnected ? 'Connected to internet!' : 'No internet connection.';
+
+    removeCustomSnackBar(); // Remove any existing snackbar before showing a new one
+    _overlayEntry = _createOverlayEntry(iconData, text, color);
+    Overlay.of(context)?.insert(_overlayEntry!);
+
+    if (isConnected) {
+      Future.delayed(const Duration(seconds: 3), () {
+        removeCustomSnackBar();
+      });
+    }
+  }
+
+  void removeCustomSnackBar() {
+    _overlayEntry?.remove();
+    _overlayEntry = null;
+  }
+
+  OverlayEntry _createOverlayEntry(IconData icon, String text, Color color) {
+    return OverlayEntry(
+      builder: (context) => Positioned(
+        top: MediaQuery.of(context).padding.top + kToolbarHeight + 8, // Adjust as needed
+        left: 16,
+        right: 16,
+        child: Material(
+          color: Colors.transparent,
+          child: Container(
+            padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+            decoration: BoxDecoration(
+              color: color,
+              borderRadius: BorderRadius.circular(8),
+              boxShadow: const [
+                BoxShadow(
+                  color: Colors.black26,
+                  blurRadius: 10,
+                  offset: Offset(0, 2),
+                ),
+              ],
+            ),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(icon, color: Colors.white),
+                const SizedBox(width: 8),
+                Text(text, style: const TextStyle(color: Colors.white)),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
