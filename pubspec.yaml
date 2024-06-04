@@ -46,6 +46,7 @@ dependencies:
   internet_connection_checker_plus: ^2.3.0
   external_path: ^1.0.3
   media_scanner: ^2.1.0
+  loading_indicator: ^3.1.1
 
 dev_dependencies:
   flutter_test:

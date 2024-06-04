@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:internet_connection_checker_plus/internet_connection_checker_plus.dart';
+import 'package:loading_indicator/loading_indicator.dart';
 
 import '../models/media.dart';
 import '../wedgits/floating_rectangle.dart';
@@ -35,26 +36,26 @@ class _HomeScreenState extends State<HomeScreen> {
     super.initState();
     _internetConnectionStreamSubscription =
         InternetConnection().onStatusChange.listen((event) {
-          switch (event) {
-            case InternetStatus.connected:
-              setState(() {
-                isConnectedToInternet = true;
-              });
-              showConnectivitySnackBar(context, isConnectedToInternet);
-              break;
-            case InternetStatus.disconnected:
-              setState(() {
-                isConnectedToInternet = false;
-              });
-              showConnectivitySnackBar(context, isConnectedToInternet);
-              break;
-            default:
-              setState(() {
-                isConnectedToInternet = false;
-              });
-              showConnectivitySnackBar(context, isConnectedToInternet);
-          }
-        });
+      switch (event) {
+        case InternetStatus.connected:
+          setState(() {
+            isConnectedToInternet = true;
+          });
+          showConnectivitySnackBar(context, isConnectedToInternet);
+          break;
+        case InternetStatus.disconnected:
+          setState(() {
+            isConnectedToInternet = false;
+          });
+          showConnectivitySnackBar(context, isConnectedToInternet);
+          break;
+        default:
+          setState(() {
+            isConnectedToInternet = false;
+          });
+          showConnectivitySnackBar(context, isConnectedToInternet);
+      }
+    });
     _controller = CameraController(widget.cameras[0], ResolutionPreset.high);
     _initializeControllerFuture = _controller.initialize();
   }
@@ -100,61 +101,106 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
                 SafeArea(
                     child: Container(
-                      height: 50,
-                      color: Colors.black.withOpacity(0.3),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  height: 50,
+                  color: Colors.black.withOpacity(0.3),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Row(
                         children: [
-                          Row(
-                            children: [
-                              const SizedBox(width: 16),
-                              GestureDetector(
-                                onTap: () {
-                                  if (Platform.isAndroid) {
-                                    SystemNavigator.pop();
-                                  } else if (Platform.isIOS) {
-                                    exit(0);
-                                  }
-                                },
-                                child: const Icon(Icons.close, color: Colors.white),
-                              ),
-                              const SizedBox(width: 16),
-                              GestureDetector(
-                                onTap: () {
-                                  setState(() {
-                                    isFlashOn = !isFlashOn;
-                                  });
-                                },
-                                child: Container(
-                                  decoration: const BoxDecoration(
-                                      color: Colors.transparent,
-                                      shape: BoxShape.circle),
-                                  child: Padding(
-                                    padding: const EdgeInsets.all(10),
-                                    child: _isFlashVisible
-                                        ? isFlashOn
-                                        ? const Icon(
-                                        Icons.flash_on, color: Colors.white)
-                                        : const Icon(Icons.flash_off,
-                                        color: Colors.white)
-                                        : Container(),
-                                  ),
-                                ),
-                              )
-                            ],
-                          ),
-                          const Spacer(),
-                          const Icon(CupertinoIcons.ellipsis_vertical,
-                              color: Colors.white),
                           const SizedBox(width: 16),
+                          GestureDetector(
+                            onTap: () {
+                              if (Platform.isAndroid) {
+                                SystemNavigator.pop();
+                              } else if (Platform.isIOS) {
+                                exit(0);
+                              }
+                            },
+                            child: const Icon(Icons.close, color: Colors.white),
+                          ),
+                          const SizedBox(width: 16),
+                          GestureDetector(
+                            onTap: () {
+                              setState(() {
+                                isFlashOn = !isFlashOn;
+                              });
+                            },
+                            child: Container(
+                              decoration: const BoxDecoration(
+                                  color: Colors.transparent,
+                                  shape: BoxShape.circle),
+                              child: Padding(
+                                padding: const EdgeInsets.all(10),
+                                child: _isFlashVisible
+                                    ? isFlashOn
+                                        ? const Icon(Icons.flash_on,
+                                            color: Colors.white)
+                                        : const Icon(Icons.flash_off,
+                                            color: Colors.white)
+                                    : Container(),
+                              ),
+                            ),
+                          )
                         ],
                       ),
-                    )),
+                      const Spacer(),
+                      const Icon(CupertinoIcons.ellipsis_vertical,
+                          color: Colors.white),
+                      const SizedBox(width: 16),
+                    ],
+                  ),
+                )),
               ],
             );
           } else {
-            return const Center(
-              child: CircularProgressIndicator(),
+            return Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  const Expanded(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Center(
+                          child: SizedBox(
+                            width: 50,
+                            height: 50,
+                            child: LoadingIndicator(
+                              indicatorType: Indicator.circleStrokeSpin,
+                              colors: [Colors.red],
+                              strokeWidth: 5,
+                            ),
+                          ),
+                        )
+                      ],
+                    ),
+                  ),
+                  Align(
+                    alignment: Alignment.bottomCenter,
+                    child: RichText(
+                      text: const TextSpan(
+                        children: [
+                          TextSpan(
+                            text: "powered by",
+                            style: TextStyle(
+                              fontSize: 10,
+                            ),
+                          ),
+                          TextSpan(
+                            text: " SeventhColor",
+                            style: TextStyle(
+                              fontSize: 18,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 20),
+                ],
+              ),
             );
           }
         },
@@ -165,7 +211,8 @@ class _HomeScreenState extends State<HomeScreen> {
   void showConnectivitySnackBar(BuildContext context, bool isConnected) {
     final IconData iconData = isConnected ? Icons.wifi : Icons.wifi_off;
     final color = isConnected ? Colors.green : Colors.red;
-    final text = isConnected ? 'Connected to internet!' : 'No internet connection.';
+    final text =
+        isConnected ? 'Connected to internet!' : 'No internet connection.';
 
     removeCustomSnackBar(); // Remove any existing snackbar before showing a new one
     _overlayEntry = _createOverlayEntry(iconData, text, color);
@@ -186,7 +233,9 @@ class _HomeScreenState extends State<HomeScreen> {
   OverlayEntry _createOverlayEntry(IconData icon, String text, Color color) {
     return OverlayEntry(
       builder: (context) => Positioned(
-        top: MediaQuery.of(context).padding.top + kToolbarHeight + 8, // Adjust as needed
+        top: MediaQuery.of(context).padding.top +
+            kToolbarHeight +
+            8, // Adjust as needed
         left: 16,
         right: 16,
         child: Material(
