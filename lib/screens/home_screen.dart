@@ -96,6 +96,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   },
                   selectedMedias: _selectedMedias,
                   isFlashOn: isFlashOn,
+                  cameraController: _controller,
                 ),
                 SafeArea(
                     child: Container(

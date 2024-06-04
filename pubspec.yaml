@@ -44,6 +44,8 @@ dependencies:
   path_provider: ^2.1.2
   http: ^1.2.1
   internet_connection_checker_plus: ^2.3.0
+  external_path: ^1.0.3
+  media_scanner: ^2.1.0
 
 dev_dependencies:
   flutter_test:
