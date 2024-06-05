@@ -39,7 +39,7 @@ class _MediaItemState extends State<MediaItem> {
               height: 30,
               child: LoadingIndicator(
                 indicatorType: Indicator.circleStrokeSpin,
-                colors: [Colors.red],
+                colors: [Color(0xFFC6293C)],
                 strokeWidth: 3,
                 backgroundColor: Colors.transparent,
               ),
