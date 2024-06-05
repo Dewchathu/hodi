@@ -15,10 +15,10 @@ class TextOutputScreen extends StatefulWidget {
   final String result;
   const TextOutputScreen(
       {Key? key,
-      this.media,
-      required this.isCameraImage,
-      this.file,
-      required this.result})
+        this.media,
+        required this.isCameraImage,
+        this.file,
+        required this.result})
       : super(key: key);
 
   @override

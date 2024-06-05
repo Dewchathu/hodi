@@ -108,7 +108,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     children: [
                       Row(
                         children: [
-                          const SizedBox(width: 16),
+                          const SizedBox(width: 20),
                           GestureDetector(
                             onTap: () {
                               if (Platform.isAndroid) {
@@ -141,13 +141,41 @@ class _HomeScreenState extends State<HomeScreen> {
                                     : Container(),
                               ),
                             ),
-                          )
+                          ),
                         ],
                       ),
                       const Spacer(),
-                      const Icon(CupertinoIcons.ellipsis_vertical,
-                          color: Colors.white),
-                      const SizedBox(width: 16),
+                      PopupMenuButton<int>(
+                        icon: const Icon(CupertinoIcons.ellipsis_vertical, color: Colors.white),
+                        onSelected: (value) {
+                          switch (value) {
+                            case 0:
+                              _showTermsAndConditions(context);
+                              break;
+                            case 1:
+                              _showPrivacy(context);
+                              break;
+                            case 2:
+                              _showFeedback(context);
+                              break;
+                          }
+                        },
+                        itemBuilder: (context) => [
+                          const PopupMenuItem<int>(
+                            value: 0,
+                            child: Text('Terms and Conditions'),
+                          ),
+                          const PopupMenuItem<int>(
+                            value: 1,
+                            child: Text('Privacy'),
+                          ),
+                          const PopupMenuItem<int>(
+                            value: 2,
+                            child: Text('Feedback'),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(width: 10),
                     ],
                   ),
                 )),
@@ -189,7 +217,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             ),
                           ),
                           TextSpan(
-                            text: " SeventhColor",
+                            text: " SeventhColour",
                             style: TextStyle(
                               fontSize: 18,
                             ),
@@ -263,6 +291,53 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
           ),
         ),
+      ),
+    );
+  }
+  void _showTermsAndConditions(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text('Terms and Conditions'),
+        content: Text('Terms and Conditions content goes here...'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(),
+            child: Text('Close'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _showPrivacy(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text('Privacy'),
+        content: Text('Privacy content goes here...'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(),
+            child: Text('Close'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _showFeedback(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text('Feedback'),
+        content: Text('Feedback content goes here...'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(),
+            child: Text('Close'),
+          ),
+        ],
       ),
     );
   }

@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:hodi/wedgits/media_item.dart';
-
 import '../models/media.dart';
 
 class MediaGridView extends StatelessWidget {
@@ -17,7 +16,7 @@ class MediaGridView extends StatelessWidget {
       ),
       itemCount: medias.length,
       itemBuilder: (BuildContext context, int index) {
-        return MediaItem(media: medias[index]) ;// Call a function to build the tile
+        return MediaItem(media: medias[index]); // Call a function to build the tile
       },
     );
   }

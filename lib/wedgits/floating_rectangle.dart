@@ -228,9 +228,19 @@ class _FloatingRectangleState extends State<FloatingRectangle> {
                             color: Colors.transparent,
                             borderRadius: BorderRadius.circular(10),
                           ),
-                          child: _medias.isNotEmpty
-                              ? MediaItem(media: _medias.first)
-                              : Container(),
+                          // child: _medias.isNotEmpty
+                          //     ? MediaItem(media: _medias.first)
+                          //     : Container(),
+                          child: InkWell(
+                            child: const Icon(
+                              Icons.photo_library_outlined,
+                              size: 40,
+                              color: Colors.grey,
+                            ),
+                            onTap: () {
+                              _animateToHeight(screenHeight);
+                            },
+                          ),
                         ),
                         GestureDetector(
                           onTap: () {
