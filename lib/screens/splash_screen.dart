@@ -17,10 +17,13 @@ class _SplashScreenState extends State<SplashScreen> {
     Future.delayed(const Duration(seconds: 5), () {
       Navigator.pushReplacement(
         context,
-        MaterialPageRoute(builder: (context) => HomeScreen(cameras: widget.cameras,)),
+        MaterialPageRoute(
+          builder: (context) => HomeScreen(cameras: widget.cameras),
+        ),
       );
     });
   }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -33,17 +36,18 @@ class _SplashScreenState extends State<SplashScreen> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  RichText(
-                    text: TextSpan(
-                      children: [
-                        TextSpan(
-                          text: "Hodi",
-                          style: TextStyle(
-                            fontSize: 30,
-                            color: Theme.of(context).primaryColor,
-                          ),
-                        ),
-                      ],
+                  Image.asset(
+                    'assets/images/logo.png',
+                    width: 80,
+                    height: 80,
+                  ),
+                  const SizedBox(height: 10),
+                  Text(
+                    "Hodi",
+                    style: TextStyle(
+                      fontSize: 40,
+                      fontWeight: FontWeight.bold,
+                      color: Theme.of(context).primaryColor,
                     ),
                   ),
                 ],
@@ -52,7 +56,7 @@ class _SplashScreenState extends State<SplashScreen> {
             Align(
               alignment: Alignment.bottomCenter,
               child: RichText(
-                text:const TextSpan(
+                text: const TextSpan(
                   children: [
                     TextSpan(
                       text: "powered by",
@@ -61,7 +65,7 @@ class _SplashScreenState extends State<SplashScreen> {
                       ),
                     ),
                     TextSpan(
-                      text: " SeventhColor",
+                      text: " SeventhColour",
                       style: TextStyle(
                         fontSize: 18,
                       ),
@@ -77,4 +81,3 @@ class _SplashScreenState extends State<SplashScreen> {
     );
   }
 }
-
