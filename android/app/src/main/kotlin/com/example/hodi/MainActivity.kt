@@ -1,4 +1,4 @@
-package com.example.hodi
+package com.dew.hodi
 
 import io.flutter.embedding.android.FlutterActivity
 

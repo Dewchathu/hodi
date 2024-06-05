@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:hodi/screens/splash_screen.dart';
 import 'package:hodi/theme/theme_constants.dart';
 import 'package:hodi/theme/theme_manager.dart';
-import 'package:provider/provider.dart';
 
 void main() async{
   WidgetsFlutterBinding.ensureInitialized();

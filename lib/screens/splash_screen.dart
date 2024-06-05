@@ -36,37 +36,40 @@ class _SplashScreenState extends State<SplashScreen> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Image.asset(
-                    'assets/images/logo.png',
-                    width: 80,
-                    height: 80,
-                  ),
-                  const SizedBox(height: 10),
                   Text(
-                    "Hodi",
+                    "හෝඩි",
                     style: TextStyle(
                       fontSize: 40,
                       fontWeight: FontWeight.bold,
                       color: Theme.of(context).primaryColor,
                     ),
                   ),
+                  const SizedBox(height: 15),
+                  Image.asset(
+                    'assets/images/logo.png',
+                    width: 80,
+                    height: 80,
+                  ),
+
                 ],
               ),
             ),
             Align(
               alignment: Alignment.bottomCenter,
               child: RichText(
-                text: const TextSpan(
+                text: TextSpan(
                   children: [
                     TextSpan(
                       text: "powered by",
                       style: TextStyle(
+                        color: Theme.of(context).focusColor,
                         fontSize: 10,
                       ),
                     ),
                     TextSpan(
                       text: " SeventhColour",
                       style: TextStyle(
+                        color: Theme.of(context).focusColor,
                         fontSize: 18,
                       ),
                     ),

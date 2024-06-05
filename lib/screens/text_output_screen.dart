@@ -60,8 +60,15 @@ class _TextOutputScreenState extends State<TextOutputScreen> {
               const SizedBox(height: 10),
               ElevatedButton.icon(
                 onPressed: _copy,
-                icon: const Icon(Icons.copy),
-                label: const Text('Copy'),
+                icon: Icon(
+                    Icons.copy,
+                  color: Theme.of(context).focusColor,
+                ),
+                label: Text('Copy',
+                style: TextStyle(
+                  color: Theme.of(context).focusColor
+                ),
+                ),
               )
             ],
           ),

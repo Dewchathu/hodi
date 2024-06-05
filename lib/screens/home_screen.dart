@@ -197,7 +197,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             height: 50,
                             child: LoadingIndicator(
                               indicatorType: Indicator.circleStrokeSpin,
-                              colors: [Colors.red],
+                              colors: [Color(0xFFC6293C)],
                               strokeWidth: 5,
                             ),
                           ),
@@ -208,17 +208,19 @@ class _HomeScreenState extends State<HomeScreen> {
                   Align(
                     alignment: Alignment.bottomCenter,
                     child: RichText(
-                      text: const TextSpan(
+                      text: TextSpan(
                         children: [
                           TextSpan(
                             text: "powered by",
                             style: TextStyle(
+                              color: Theme.of(context).focusColor,
                               fontSize: 10,
                             ),
                           ),
                           TextSpan(
                             text: " SeventhColour",
                             style: TextStyle(
+                              color: Theme.of(context).focusColor,
                               fontSize: 18,
                             ),
                           ),
@@ -238,7 +240,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   void showConnectivitySnackBar(BuildContext context, bool isConnected) {
     final IconData iconData = isConnected ? Icons.wifi : Icons.wifi_off;
-    final color = isConnected ? Colors.green : Colors.red;
+    final color = isConnected ? Colors.green : const Color(0xFFC6293C);
     final text =
         isConnected ? 'Connected to internet!' : 'No internet connection.';
 
