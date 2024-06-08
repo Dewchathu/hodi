@@ -6,7 +6,6 @@ import 'package:flutter/services.dart';
 
 import '../models/media.dart';
 import '../wedgits/media_item.dart';
-import 'package:http/http.dart' as http;
 
 class TextOutputScreen extends StatefulWidget {
   final Media? media;
@@ -43,34 +42,43 @@ class _TextOutputScreenState extends State<TextOutputScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(),
-        body: Padding(
-          padding: const EdgeInsets.only(left: 30.0, right: 30.0),
-          child: Column(
-            children: [
-              !widget.isCameraImage
-                  ? SizedBox(width: 100, child: MediaItem(media: widget.media!))
-                  : SizedBox(width: 100, child: Image.file(widget.file!)),
-              const SizedBox(height: 20),
-              TextField(
+        body: SingleChildScrollView(
+          child: Padding(
+            padding: const EdgeInsets.only(left: 30.0, right: 30.0),
+            child: Column(
+              children: [
+                !widget.isCameraImage
+                    ? SizedBox(width: 100, child: MediaItem(media: widget.media!))
+                    : SizedBox(width: 100, child: Image.file(widget.file!)),
+                const SizedBox(height: 20),
+                TextField(
                   minLines: 1,
                   maxLines: 10,
                   controller: controller,
-                  decoration: const InputDecoration(
-                      fillColor: Colors.grey, border: OutlineInputBorder())),
-              const SizedBox(height: 10),
-              ElevatedButton.icon(
-                onPressed: _copy,
-                icon: Icon(
-                    Icons.copy,
-                  color: Theme.of(context).focusColor,
+                  decoration: InputDecoration(
+                    fillColor: Colors.grey,
+                    border: const OutlineInputBorder(),
+                    focusedBorder: OutlineInputBorder(
+                      borderSide: BorderSide(color: Theme.of(context).focusColor),
+                    ),
+                  ),
                 ),
-                label: Text('Copy',
-                style: TextStyle(
-                  color: Theme.of(context).focusColor
-                ),
-                ),
-              )
-            ],
+          
+                const SizedBox(height: 10),
+                ElevatedButton.icon(
+                  onPressed: _copy,
+                  icon: Icon(
+                      Icons.copy,
+                    color: Theme.of(context).focusColor,
+                  ),
+                  label: Text('Copy',
+                  style: TextStyle(
+                    color: Theme.of(context).focusColor
+                  ),
+                  ),
+                )
+              ],
+            ),
           ),
         ));
   }

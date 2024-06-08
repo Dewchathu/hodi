@@ -187,19 +187,15 @@ class _HomeScreenState extends State<HomeScreen> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  const Expanded(
+                  Expanded(
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Center(
-                          child: SizedBox(
-                            width: 50,
-                            height: 50,
-                            child: LoadingIndicator(
-                              indicatorType: Indicator.circleStrokeSpin,
-                              colors: [Color(0xFFC6293C)],
-                              strokeWidth: 5,
-                            ),
+                          child: Image.asset(
+                            'assets/images/logo.png',
+                            width: 100,
+                            height: 100,
                           ),
                         )
                       ],
